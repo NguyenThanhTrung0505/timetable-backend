@@ -7,10 +7,15 @@ import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 const app = express();
-
+app.set("trust proxy", 1);
 // --- 1. MIDDLEWARES ---
 app.use(helmet()); // Bảo mật HTTP headers
-app.use(cors()); // Cho phép Frontend gọi API
+app.use(
+    cors({
+        origin: process.env.FRONTEND_URL || "http://localhost:5173",
+        credentials: true, // Cần thiết nếu bạn có dùng cookie/session
+    }),
+);
 app.use(express.json()); // Parse body request dạng JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev")); // Log request ra console
@@ -22,9 +27,14 @@ const limiter = rateLimit({
     max: 100,
     message: "Too many requests from this IP, please try again later.",
 });
+const authLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 5,
+    message: "Quá nhiều thao tác xác thực, vui lòng thử lại sau 1 phút.",
+});
 app.use("/api", limiter);
 app.use("/api/event", eventRoutes);
-app.use("/api/auth", auth);
+app.use("/api/auth", authLimiter, auth);
 app.use((err, req, res, next) => {
     console.error("🔥 Error Stack:", err.stack); // Log lỗi ra console để dev dễ check
 
