@@ -28,7 +28,7 @@ export const getInfoController = catchAsync(async (req, res) => {
 });
 
 export const getEventInWeekController = catchAsync(async (req, res) => {
-    const user_id = 2;
+    const user_id = req.user.id;
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
     const result = await getEventInWeekService(user_id, startDate, endDate);
