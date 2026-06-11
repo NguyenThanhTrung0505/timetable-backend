@@ -1,6 +1,7 @@
 import "dotenv/config";
 import eventRoutes from "./routes/eventRoutes.js";
 import auth from "./routes/authRoutes.js";
+import checkHealth from "./routes/healthRoutes.js";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -34,6 +35,7 @@ const authLimiter = rateLimit({
 });
 app.use("/api", limiter);
 app.use("/api/event", eventRoutes);
+app.use("/api/", checkHealth);
 app.use("/api/auth", authLimiter, auth);
 app.use((err, req, res, next) => {
     console.error("🔥 Error Stack:", err.stack); // Log lỗi ra console để dev dễ check
