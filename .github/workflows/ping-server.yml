@@ -2,9 +2,10 @@ name: Keep Server Awake
 on:
   schedule:
     - cron: "*/14 * * * *" # Chạy mỗi 14 phút
+  workflow_dispatch:
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Render Endpoint
-        run: curl https://timetable-backend-1jqm.onrender.com/api/health-check
+        run: curl -s https://timetable-backend-1jqm.onrender.com/api/health-check
